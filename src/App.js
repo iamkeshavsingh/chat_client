@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { io } from 'socket.io-client';
+
+const SERVER_DOMAIN = 'http://localhost:5000';
+const socket = io(SERVER_DOMAIN);
 
 function App() {
+
+  var [name, setName] = useState(null)
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    socket.emit('join', {
+      name: name,
+      age: '23'
+    }, function (data) {
+      console.log(data)
+    })
+  }
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      Hello Client
+      <form onSubmit={handleSubmit}>
+        <input type="text" name="name" onChange={(e) => setName(e.target.value)} />
+        <button type="submit">Join the chat</button>
+      </form>
     </div>
   );
 }
