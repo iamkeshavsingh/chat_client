@@ -1,32 +1,19 @@
-import { useState } from "react";
-import { io } from 'socket.io-client';
-
-const SERVER_DOMAIN = 'http://localhost:5000';
-const socket = io(SERVER_DOMAIN);
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import Auth from './pages/Auth/Auth';
+import Home from './pages/Home/Home';
 
 function App() {
 
-  var [name, setName] = useState(null)
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    socket.emit('join', {
-      name: name,
-      age: '23'
-    }, function (data) {
-      console.log(data)
-    })
-  }
-
-
   return (
-    <div className="App">
-      Hello Client
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" onChange={(e) => setName(e.target.value)} />
-        <button type="submit">Join the chat</button>
-      </form>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/" render={() => {
+          return <Redirect to={'/auth'} />
+        }} />
+        <Route path="/auth" component={Auth} />
+        <Route path="/message" component={Home} />
+      </Switch>
+    </Router>
   );
 }
 

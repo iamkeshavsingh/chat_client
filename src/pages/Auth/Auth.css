@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.Auth {
+  width: 100vw;
+  height: 100vh;
+  background-color: aliceblue;
+}
+
+.Auth_row {
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+}
+.title {
+  font-size: 70px;
+  color: blue;
+  text-transform: uppercase;
+  text-decoration: underline;
+}

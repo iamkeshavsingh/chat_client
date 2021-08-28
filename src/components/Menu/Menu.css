@@ -1,0 +1,16 @@
+.menu {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 30px;
+  margin-top: 20px;
+}
+
+.menu > span {
+  font-weight: bold;
+}
+
+.menu:hover {
+  background-color: lightblue;
+}
