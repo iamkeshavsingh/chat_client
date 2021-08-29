@@ -5,13 +5,10 @@ import './Message.css'
 
 function Message({ mine }) {
 
-    var mainClass = cx(
-        'message',
-        { 'mine': mine }
-    );
+    var wrapperClass = cx('message', { 'mine': mine });
 
     return (
-        <div className={mainClass}>
+        <div className={wrapperClass}>
             <div className="messageTop">
                 <p className="initial">KY</p>
                 <p className="messageText">Hello This is message</p>

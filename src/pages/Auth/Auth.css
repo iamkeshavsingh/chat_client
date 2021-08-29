@@ -21,3 +21,11 @@ body {
   text-transform: uppercase;
   text-decoration: underline;
 }
+
+.Auth_form > input {
+  width: 60%;
+}
+
+.Auth_form {
+  margin-top: 100px;
+}
