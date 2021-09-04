@@ -2,11 +2,11 @@ import React from 'react'
 
 import './Menu.css'
 
-function Menu() {
+function Menu({ id, name, action }) {
     return (
-        <div>
+        <div onClick={() => action(id)}>
             <div className="menu">
-                <span>Keshav Singh</span>
+                <span>{name}</span>
             </div>
         </div>
     )

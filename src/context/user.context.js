@@ -5,7 +5,7 @@ import authReducer from '../store/auth/auth.reducer'
 const INIT_STATE = {
     user: null,
     isLoggedIn: false,
-    error: null
+    error: null,
 };
 
 

@@ -13,12 +13,11 @@ function Auth() {
     var { isLoggedIn, dispatch } = useUserContext();
 
     function onSubmit(data) {
-        axios.post('http://localhost:5000/auth/signup', data)
+        axios.post('http://localhost:5000/auth/signin', data)
             .then(response => {
-                dispatch(setUser({
-                    token: response.token,
-                    ...response.decodedToken
-                }));
+                var userData = response.data
+                localStorage.setItem('token', userData.token);
+                dispatch(setUser(userData.decodedToken));
             })
     }
 

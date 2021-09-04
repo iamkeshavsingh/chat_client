@@ -3,15 +3,15 @@ import cx from 'classnames'
 
 import './Message.css'
 
-function Message({ mine }) {
+function Message({ mine, text }) {
 
     var wrapperClass = cx('message', { 'mine': mine });
 
     return (
         <div className={wrapperClass}>
             <div className="messageTop">
-                <p className="initial">KY</p>
-                <p className="messageText">Hello This is message</p>
+                <p className="initial">{'User'}</p>
+                <p className="messageText">{text}</p>
             </div>
             <div className="messageBottom"></div>
         </div>
