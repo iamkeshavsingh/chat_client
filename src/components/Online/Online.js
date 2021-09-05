@@ -2,10 +2,10 @@ import React from 'react'
 
 import './Online.css'
 
-function Online() {
+function Online({ name }) {
     return (
-        <div className="onlineUser">
-
+        <div className="menu">
+            <span>{name}</span>
         </div>
     )
 }

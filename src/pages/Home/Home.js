@@ -1,7 +1,9 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Menu from '../../components/Menu/Menu'
 import Message from '../../components/Message/Message'
+import io from 'socket.io-client';
+import Online from '../../components/Online/Online'
 
 import useUserContext from '../../hooks/useUserContext'
 
@@ -12,6 +14,10 @@ function Home() {
     var { user } = useUserContext();
     const [conversations, setConversation] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [onlineFriends, setOnlineFriends] = useState([]);
+    const [newMessage, setNewMessage] = useState(null);
+    const [activeChannel, setActiveChannel] = useState(null);
+    const socket = useRef(io('http://localhost:5000'));
 
     useEffect(() => {
         // get All the channels for this particular user
@@ -21,12 +27,33 @@ function Home() {
                 var conver = channels.map(channel => {
                     return {
                         id: channel._id,
-                        name: channel.user1 === user.name ? channel.user2 : channel.user1
+                        name: channel.user1 === user.name ? channel.user2 : channel.user1,
+                        friendId: channel.channel[0] === user._id ? channel.channel[1] : channel.channel[0]
                     };
                 });
                 setConversation(conver)
             })
     }, [user]);
+
+    useEffect(() => {
+        socket.current.emit('addUser', {
+            userId: user._id,
+            name: user.name,
+        });
+        socket.current.on('getUsers', users => {
+            setOnlineFriends(users);
+        });
+
+        socket.current.on('message', message => {
+            setMessages([
+                ...messages,
+                {
+                    text: message.message,
+                    mine: message.receiverId === user._id
+                }
+            ]);
+        })
+    }, []);
 
     function fetchMessages(id) {
         axios.get('http://localhost:5000/message/' + id)
@@ -39,7 +66,28 @@ function Home() {
                     };
                 });
                 setMessages(messages)
+                setActiveChannel(id);
             })
+    }
+
+
+
+    function handleMessageSubmit() {
+        // we need to send the message to our db
+        axios.post('http://localhost:5000/message', {
+            channelId: activeChannel,
+            senderId: user._id,
+            text: newMessage
+        }).then(() => {
+            var receiver = conversations.find(conversation => conversation.id == activeChannel)
+            var socketInfo = onlineFriends.find(friend => friend.id == receiver.friendId)
+            socket.current.emit('newMessage', {
+                message: newMessage,
+                receiverSocketId: socketInfo.socketId,
+                receiverId: receiver.friendId
+            });
+        })
+        setNewMessage('');
     }
 
     return (
@@ -56,15 +104,15 @@ function Home() {
                         {messages.map(message => <Message {...message} />)}
                     </div>
                     <div className="boxBottom">
-                        <textarea name="message" id="message" cols="30" rows="10" placeholder="Write Here..." className="chatInput"></textarea>
-                        <button className="submitButton">Send</button>
+                        <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} name="message" id="message" cols="30" rows="10" placeholder="Write Here..." className="chatInput"></textarea>
+                        <button onClick={handleMessageSubmit} className="submitButton">Send</button>
                     </div>
                 </div>
             </div>
             <div className="online">
                 <div className="onlineWrapper">
                     <h4>Online Friends</h4>
-                    <Menu />
+                    {onlineFriends.map(friend => <Online {...friend} />)}
                 </div>
             </div>
         </div>
