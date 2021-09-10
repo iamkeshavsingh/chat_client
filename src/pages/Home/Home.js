@@ -17,7 +17,12 @@ function Home() {
     const [onlineFriends, setOnlineFriends] = useState([]);
     const [newMessage, setNewMessage] = useState(null);
     const [activeChannel, setActiveChannel] = useState(null);
-    const socket = useRef(io('http://localhost:5000'));
+    const socket = useRef();
+
+
+    useEffect(() => {
+        socket.current = io('http://localhost:5000');
+    }, []);
 
     useEffect(() => {
         // get All the channels for this particular user
@@ -45,15 +50,15 @@ function Home() {
         });
 
         socket.current.on('message', message => {
-            setMessages([
+            setMessages(messages => ([
                 ...messages,
                 {
                     text: message.message,
-                    mine: message.receiverId === user._id
+                    mine: false
                 }
-            ]);
+            ]));
         })
-    }, []);
+    }, [messages, user]);
 
     function fetchMessages(id) {
         axios.get('http://localhost:5000/message/' + id)
@@ -71,7 +76,6 @@ function Home() {
     }
 
 
-
     function handleMessageSubmit() {
         // we need to send the message to our db
         axios.post('http://localhost:5000/message', {
@@ -87,6 +91,13 @@ function Home() {
                 receiverId: receiver.friendId
             });
         })
+        setMessages(messages => ([
+            ...messages,
+            {
+                text: newMessage,
+                mine: true
+            }
+        ]));
         setNewMessage('');
     }
 
